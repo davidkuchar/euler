@@ -97,7 +97,7 @@ end
 # 	What is the 10001st prime number?
 def p7
 	primes = [2]
-	for x in 1...10001
+	(1...10001).each do
 		prime = next_prime(primes[-1])
 		primes.push(prime)
 	end
@@ -112,14 +112,10 @@ def p8
 	value = 7316717653133062491922511967442657474235534919493496983520312774506326239578318016984801869478851843858615607891129494954595017379583319528532088055111254069874715852386305071569329096329522744304355766896648950445244523161731856403098711121722383113622298934233803081353362766142828064444866452387493035890729629049156044077239071381051585930796086670172427121883998797908792274921901699720888093776657273330010533678812202354218097512545405947522435258490771167055601360483958644670632441572215539753697817977846174064955149290862569321978468622482839722413756570560574902614079729686524145351004748216637048440319989000889524345065854122758866688116427171479924442928230863465674813919123162824586178664583591245665294765456828489128831426076900422421902267105562632111110937054421750694165896040807198403850962455444362981230987879927244284909188845801561660979191338754992005240636899125607176060588611646710940507754100225698315520005593572972571636269561882670428252483600823257530420752963450
 	value_array = value.to_s.split('').map(&:to_i)
 	products = []
-	for index in 0...value_array.length-5
-		# puts "index %d" % index
-		# puts "array section " + value_array[index..index+5].to_s
-		product = value_array[index...index+5].reduce(:*)
-		# puts "product %d" % product
+	(0...value_array.length-5).each do |i|
+		product = value_array[i...i+5].reduce(:*)
 		products.push(product)
 	end
-	# puts products
 	products.max
 end
 
@@ -130,20 +126,13 @@ end
 	# For example, 3^2 + 4^2 = 9 + 16 = 25 = 5^2.
 	# There exists exactly one Pythagorean triplet for which a + b + c = 1000.
 	# Find the product abc.
-def get_b(a,x=1000.0)
-	(2.0 * x * a - x ** 2.0) / (2.0 * a - 2.0 * x)
-end
-
-def get_c(a,b)
-	(a ** 2 + b ** 2) ** 0.5
-end
-
 def p9
-	a = 1
+	a, x = 1, 1000
 	loop do
-		b = get_b(a)
-		if b % 1 == 0
-			puts triplet = [a,b,get_c(a,b)].to_a
+		b = (2.0 * x * a - x ** 2.0) / (2.0 * a - 2.0 * x)
+		if (b % 1).zero?
+			c = (a ** 2 + b ** 2) ** 0.5
+			puts triplet = [a,b,c].to_a
 			return triplet.reduce(:*)
 		end
 		a += 1
@@ -213,57 +202,35 @@ def p11
 		[1,	70,54,71,83,51,54,69,16,92,33,48,61,43,52,1, 89,19,67,48]
 	]
 	products = []
-	row = 0
-	col = 0
-	while row < grid.row_count
-		puts "row #{row}"
-		while col < grid.column_count
-			puts "col #{col}"
+	(0...grid.row_count).each do |row|
+		(0...grid.column_count).each do |col|
 			right = col + 3 < grid.row_count
 			down = row + 3 < grid.column_count
 			left = col - 3 >= 0
 			if right
-				puts "right"
 				set = grid.minor(row..row,col..col+3)
-				puts set.inspect
 				products.push(set.reduce(:*))
-				puts products[-1]
 			end
 			if down and right
-				puts "down-right"
 				diagonal = []
-				for x in 0..3
+				(0..3).each do |x|
 					diagonal.push(grid.minor(row+x..row+x,col+x..col+x).component(0,0))
 				end
-				puts diagonal.inspect
 				products.push(diagonal.reduce(:*))
-				puts products[-1]
 			end
 			if down
-				puts "down"
 				set = grid.minor(row..row+3,col..col)
-				puts set.inspect
 				products.push(set.reduce(:*))
-				puts products[-1]
 			end
 			if down and left
-				puts "down-left"
 				diagonal = []
-				for x in 0..3
+				(0..3).each do |x|
 					diagonal.push(grid.minor(row+x..row+x,col-x..col-x).component(0,0))
 				end
-				puts diagonal.inspect
 				products.push(diagonal.reduce(:*))
-				puts products[-1]
 			end
-			col += 1
 		end
-		row += 1
-		col = 0
 	end
-	puts grid.inspect
-	puts ''
-	puts products.inspect
 	products.max
 end
 
@@ -434,7 +401,11 @@ end
 # 	Which starting number, under one million, produces the longest chain?
 # 	NOTE: Once the chain starts the terms are allowed to go above one million.
 def next_collatz(n)
-	n / 2 if n.even? else 3 * n + 1
+	if n.even? 
+		n / 2  
+	else 
+		3 * n + 1
+	end
 end
 
 def p14
