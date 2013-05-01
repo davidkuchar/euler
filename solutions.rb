@@ -13,32 +13,33 @@ def run(&problem)
 	"The answer is: #{result}, executed in #{time.real}."
 end
 
-def is_prime?(value)
-	for x in 2..(value ** 0.5 + 1).to_i
-		if value % x == 0
-			return false
-		end
+# assuming we don't have a built in function
+def prime?(input)
+	(2..(input ** 0.5 + 1).to_i).each do |x|
+		return false if (input % x).zero?
 	end
 	true
 end
 
+# assuming we don't have a built in function
 def next_prime(last_prime=2)
 	next_prime = last_prime + 1
-	until is_prime?(next_prime)
+	until prime?(next_prime)
 		next_prime += 1
 	end
 	return next_prime
 end
 
-def palindrome?(value)
-	value_s = value.to_s
-	value_s.reverse == value_s
+def palindrome?(input)
+	input_s = input.to_s
+	input_s.reverse == input_s
 end
 
-def palindrome_no_reverse?(value)
-	value_s = value.to_s
-	for index in 1...(value_s.length/2+1)
-		return false if value_s[index-1] != value_s[-index]
+# intended for numbers, doesn't work with spaces
+def palindrome_no_reverse?(input)
+	input_s = input.to_s
+	(1...(input_s.length/2+1)).each do |i|
+		return false if input_s[i-1] != input_s[-i]
 	end
 	return true
 end
@@ -95,11 +96,12 @@ end
 # 	Problem 7
 # 	By listing the first six prime numbers: 2, 3, 5, 7, 11, and 13, we can see that the 6th prime is 13.
 # 	What is the 10001st prime number?
+# 	assuming there is no built in method
 def p7
 	primes = [2]
 	(1...10001).each do
 		prime = next_prime(primes[-1])
-		primes.push(prime)
+		primes << prime
 	end
 	primes[-1]
 end
@@ -114,7 +116,7 @@ def p8
 	products = []
 	(0...value_array.length-5).each do |i|
 		product = value_array[i...i+5].reduce(:*)
-		products.push(product)
+		products << product
 	end
 	products.max
 end
@@ -147,7 +149,7 @@ def p10
 	primes = []
 	Prime.each do |prime|
 		break if prime >= 2000000
-		primes.push(prime)
+		primes << prime
 	end
 	# puts primes
 	primes.reduce(:+)
@@ -209,25 +211,25 @@ def p11
 			left = col - 3 >= 0
 			if right
 				set = grid.minor(row..row,col..col+3)
-				products.push(set.reduce(:*))
+				products << set.reduce(:*)
 			end
 			if down and right
 				diagonal = []
 				(0..3).each do |x|
-					diagonal.push(grid.minor(row+x..row+x,col+x..col+x).component(0,0))
+					diagonal << grid.minor(row+x..row+x,col+x..col+x).component(0,0)
 				end
-				products.push(diagonal.reduce(:*))
+				products << diagonal.reduce(:*)
 			end
 			if down
 				set = grid.minor(row..row+3,col..col)
-				products.push(set.reduce(:*))
+				products << set.reduce(:*)
 			end
 			if down and left
 				diagonal = []
 				(0..3).each do |x|
-					diagonal.push(grid.minor(row+x..row+x,col-x..col-x).component(0,0))
+					diagonal << grid.minor(row+x..row+x,col-x..col-x).component(0,0)
 				end
-				products.push(diagonal.reduce(:*))
+				products << diagonal.reduce(:*)
 			end
 		end
 	end
@@ -272,11 +274,11 @@ def p12
 	i = 1
 	sums = [0]
 	loop do 
-		sums.push(i + sums[-1])
-		break if sums[-1].factors.length >= 500
+		sums << i + sums.last
+		break if sums.last.factors.length >= 500
 		i += 1
 	end
-	return sums[-1]
+	return sums.last
 end
 
 # Large sum
