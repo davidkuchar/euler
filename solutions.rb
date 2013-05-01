@@ -389,7 +389,7 @@ def p13
 	]
 
 	sum = numbers.reduce(:+)
-	sum.to_s[0..9]
+	sum.to_s[0..9].to_i
 end
 
 # Longest Collatz sequence
@@ -403,14 +403,33 @@ end
 # 	Which starting number, under one million, produces the longest chain?
 # 	NOTE: Once the chain starts the terms are allowed to go above one million.
 def next_collatz(n)
-	if n.even? 
-		n / 2  
-	else 
-		3 * n + 1
-	end
+	n.even? ? n / 2 : 3 * n + 1
+end
+
+def collect_collatz(list)
+	list = [list] unless list.kind_of?(Array)
+	return list if list.last == 1
+	list << next_collatz(list.last)
+	collect_collatz(list)
 end
 
 def p14
-
-
+	cache = {1 => 1}
+	(1...1000000).each do |n|
+		unless cache.has_key?(n)
+			collatz_list, stored_count = [n], 0
+			until collatz_list.last == 1
+				collatz_list << next_collatz(collatz_list.last)
+				if cache.has_key?(collatz_list.last)
+					stored_count = cache[collatz_list.last]
+					break
+				end
+			end
+			(0..collatz_list.length).each do |i|
+				cache[collatz_list[-1-i]] = i + stored_count
+			end
+		end
+	end
+	max_value = cache.values.max
+	cache.select {|k,v| v == max_value}
 end
